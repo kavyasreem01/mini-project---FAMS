@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">FAaMS</string>
+    <string name="full_name">full name</string>
+    <string name="FULL_NAME">FULL NAME</string>
+    <string name="EMAIL">EMAIL</string>
+    <string name="password">PASSWORD</string>
+    <string name="confirm_password">CONFIRM PASSWORD</string>
+    <string name="fams">fams</string>
+    <string name="famss">FAMS</string>
+    <string name="app_tag">Building a secure digital future</string>
+    <string name="register">REGISTER</string>
+</resources>
