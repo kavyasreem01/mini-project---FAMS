@@ -9,4 +9,22 @@
     <string name="famss">FAMS</string>
     <string name="app_tag">Building a secure digital future</string>
     <string name="register">REGISTER</string>
+    <string name="login">LOGIN</string>
+    <string name="user_email">user_email</string>
+    <string name="Password">passwordss\n</string>
+    <string name="password1">password</string>
+    <string name="loginb">Login</string>
+    <string name="type_your_password">Type Your Password</string>
+    <string name="register_line">Not Registered Yet , Sign Up !</string>
+    <string name="email">Type your Email</string>
+    <string name="already">Already Registered , Login In !</string>
+    <string name="tag_line">Building a secure digital life..!</string>
+    <string name="Type_your_Email">Type your Email</string>
+    <string name="Confirm_your_password">Confirm_pass</string>
+    <string name="show_all">Show All</string>
+    <string name="upload_pdf">Upload PDF</string>
+    <string name="no_pdf_file_selected_yet">No PDF File Selected yet !</string>
+    <string name="select_pdf">select pdf</string>
+    <string name="img_pdf">img pdf</string>
+    <string name="fab_description">fab_description</string>
 </resources>

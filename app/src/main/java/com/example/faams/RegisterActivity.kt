@@ -1,36 +1,59 @@
 package com.example.faams
 
-import android.app.Activity
+
 import android.os.Bundle
-import android.util.Log
-import android.view.KeyEvent
-import android.view.View
-import androidx.activity.enableEdgeToEdge
+import android.widget.Toast
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import com.example.faams.databinding.ActivityRegisterBinding
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
 
-class RegisterActivity : AppCompatActivity(), View.OnClickListener, View.OnFocusChangeListener, View.OnKeyListener {
+class RegisterActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityRegisterBinding
+    private lateinit var firebaseAuth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_register)
-        Log.d("RegisterActivity", "Register activity started")
+
+        binding = ActivityRegisterBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        firebaseAuth = FirebaseAuth.getInstance()
+
+        binding.textView.setOnClickListener {
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
         }
-    override fun onClick(v: View?) {
-        TODO("Not yet implemented")
+        binding.button.setOnClickListener {
+            val email = binding.emailEt.text.toString()
+            val pass = binding.passET.text.toString()
+            val confirmPass = binding.confirmPassEt.text.toString()
 
+            if (email.isNotEmpty() && pass.isNotEmpty() && confirmPass.isNotEmpty()) {
+                if (pass == confirmPass) {
+                    firebaseAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener {
+                        if (it.isSuccessful) {
+                            val intent = Intent(this, LoginActivity::class.java)
+                            startActivity(intent)
+                        } else {
+                            try{
+                                throw it.exception!!
+                            }catch (e: FirebaseAuthUserCollisionException) {
+                                Toast.makeText(this, "This email address is already in use. Please use another email or login.", Toast.LENGTH_LONG).show()
+                            } catch (e: Exception) {
+                                Toast.makeText(this, e.message, Toast.LENGTH_SHORT).show()
+
+                        }}
+                    }
+                } else {
+                    Toast.makeText(this, "Password is not matching", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Toast.makeText(this, "Empty Fields Are not Allowed !!", Toast.LENGTH_SHORT).show()
+
+            }
+        }
     }
-
-    override fun onFocusChange(v: View?, hasFocus: Boolean) {
-        TODO("Not yet implemented")
-        
-    }
-
-    override fun onKey(v: View?, keyCode: Int, event: KeyEvent?): Boolean {
-        TODO("Not yet implemented")
-    }
-
-
 }

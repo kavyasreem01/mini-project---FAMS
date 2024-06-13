@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="LoginTextInputOuterFieldStyle">LOGIN</style>
+
+    <style name="LoginTextInputInnerFieldStyle">Email_address</style>
+</resources>
