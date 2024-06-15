@@ -13,6 +13,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
+
 class AllPdfsActivity : AppCompatActivity(), PdfFilesAdapter.PdfClickListener {
     private lateinit var binding: ActivityAllPdfsBinding
     private lateinit var databaseReference: DatabaseReference
@@ -68,4 +69,6 @@ class AllPdfsActivity : AppCompatActivity(), PdfFilesAdapter.PdfClickListener {
         intent.putExtra("downloadUrl", pdfFile.downloadUrl)
         startActivity(intent)
     }
+
 }
+

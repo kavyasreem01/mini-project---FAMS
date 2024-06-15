@@ -13,6 +13,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import com.google.firebase.auth.FirebaseAuth
 
 class MainpageActivity : AppCompatActivity() {
 
@@ -20,21 +21,20 @@ class MainpageActivity : AppCompatActivity() {
     private var pdfFileUri: Uri? = null
     private lateinit var storageReference: StorageReference
     private lateinit var databaseReference: DatabaseReference
+    private lateinit var firebaseAuth: FirebaseAuth
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        this.init()
-        initClickListeners()
-    }
-
-    private fun init() {
         binding = ActivityMainpageBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        storageReference = FirebaseStorage.getInstance().reference.child("pdfs")
-        databaseReference = FirebaseDatabase.getInstance().reference.child("pdfs")
+        firebaseAuth = FirebaseAuth.getInstance()
+        val currentUser = firebaseAuth.currentUser
+        storageReference = FirebaseStorage.getInstance().reference.child("pdfs").child(currentUser!!.uid)
+        databaseReference = FirebaseDatabase.getInstance().reference.child("pdfs").child(currentUser.uid)
 
+        initClickListeners()
     }
 
     private fun initClickListeners() {
@@ -78,6 +78,7 @@ class MainpageActivity : AppCompatActivity() {
                                 pdfFileUri = null
                                 binding.fileName.text =
                                     resources.getString(R.string.no_pdf_file_selected_yet)
+                                resources.getString(R.string.no_pdf_file_selected_yet)
                                 Toast.makeText(this, "Uploaded Successfully", Toast.LENGTH_SHORT)
                                     .show()
 

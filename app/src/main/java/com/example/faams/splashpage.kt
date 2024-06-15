@@ -18,7 +18,8 @@ class splashpage : AppCompatActivity() {
         Log.d("splashpage", "Splash screen started")
 
         Handler(Looper.getMainLooper()).postDelayed({
-            startActivity(Intent(this, RegisterActivity::class.java))
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
             finish()
         }, splashScreenDuration)
 
