@@ -27,4 +27,6 @@
     <string name="select_pdf">select pdf</string>
     <string name="img_pdf">img pdf</string>
     <string name="fab_description">fab_description</string>
+    <string name="fams2">loginimg</string>
+    <string name="fams3">regimg</string>
 </resources>

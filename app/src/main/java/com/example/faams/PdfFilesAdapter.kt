@@ -15,7 +15,10 @@ class PdfFilesAdapter(private val listener: PdfClickListener) :
 
         init {
             binding.root.setOnClickListener {
-                listener.onPdfClicked(getItem(adapterPosition))
+                val position = bindingAdapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    listener.onPdfClicked(getItem(adapterPosition))
+                }
             }
         }
 

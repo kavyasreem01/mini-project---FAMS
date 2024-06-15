@@ -1,3 +1,4 @@
+
 package com.example.faams
 
 
@@ -45,7 +46,7 @@ class RegisterActivity : AppCompatActivity() {
                             } catch (e: Exception) {
                                 Toast.makeText(this, e.message, Toast.LENGTH_SHORT).show()
 
-                        }}
+                            }}
                     }
                 } else {
                     Toast.makeText(this, "Password is not matching", Toast.LENGTH_SHORT).show()

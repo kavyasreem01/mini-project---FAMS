@@ -1,3 +1,4 @@
+
 package com.example.faams
 
 import android.os.Bundle
@@ -33,6 +34,7 @@ class LoginActivity : AppCompatActivity() {
                     if (it.isSuccessful) {
                         val intent = Intent(this, MainpageActivity::class.java)
                         startActivity(intent)
+                        finish()
                     } else {
                         Toast.makeText(this, it.exception.toString(), Toast.LENGTH_SHORT).show()
 
@@ -44,4 +46,7 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 }
+
+
+
 

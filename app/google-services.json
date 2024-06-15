@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "229379894317",
+    "project_id": "faams-e1af4",
+    "storage_bucket": "faams-e1af4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:229379894317:android:0e7debb09f5e22e2451ca4",
+        "android_client_info": {
+          "package_name": "com.example.faams"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD3k08-qZqDy5WG3YCpyvDl7Y0f_pH6b5M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
