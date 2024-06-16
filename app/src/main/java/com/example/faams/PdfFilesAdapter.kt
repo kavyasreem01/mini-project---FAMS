@@ -48,5 +48,6 @@ class PdfFilesAdapter(private val listener: PdfClickListener) :
     interface PdfClickListener {
         fun onPdfClicked(pdfFile: PdfFile)
         fun onPdfLongClicked(pdfFile: PdfFile)
+        fun onDeletePdf(pdfFile: PdfFile)
     }
 }

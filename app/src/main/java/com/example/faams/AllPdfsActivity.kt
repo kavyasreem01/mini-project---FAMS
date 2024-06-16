@@ -83,46 +83,45 @@ class AllPdfsActivity : AppCompatActivity(), PdfFilesAdapter.PdfClickListener {
     }
 
     override fun onPdfLongClicked(pdfFile: PdfFile) {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Delete PDF")
-        builder.setMessage("Are you sure you want to delete ${pdfFile.fileName}?")
-        builder.setPositiveButton("Yes") { dialog, _ ->
-            deletePdfFile(pdfFile)
-            dialog.dismiss()
-        }
-        builder.setNegativeButton("No") { dialog, _ ->
-            dialog.dismiss()
-        }
-        val dialog = builder.create()
-        dialog.show()
+        showDeleteConfirmationDialog(pdfFile)
+    }
+
+    private fun showDeleteConfirmationDialog(pdfFile: PdfFile) {
+        AlertDialog.Builder(this)
+            .setTitle("Delete PDF")
+            .setMessage("Are you sure you want to delete ${pdfFile.fileName}?")
+            .setPositiveButton("Yes") { dialog, _ ->
+                deletePdfFile(pdfFile)
+                dialog.dismiss()
+            }
+            .setNegativeButton("No") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
     }
 
     private fun deletePdfFile(pdfFile: PdfFile) {
-        val currentUser = firebaseAuth.currentUser
-        val pdfRef = FirebaseDatabase.getInstance().reference.child("pdfs").child(currentUser!!.uid)
-            .child(pdfFile.key)
+        val pdfRef = databaseReference.child(pdfFile.key)
 
-        pdfRef.removeValue().addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                val file =
-                    File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), pdfFile.fileName)
-                if (file.exists() && file.delete()) {
-                    Toast.makeText(this, "PDF deleted successfully", Toast.LENGTH_SHORT).show()
-                    pdfList.remove(pdfFile)
-                    adapter.submitList(pdfList.toList()) // Refresh the list
-                } else {
-                    Toast.makeText(this, "Failed to delete PDF locally", Toast.LENGTH_SHORT).show()
-                }
-            } else {
-                Toast.makeText(this, "Failed to delete PDF from database", Toast.LENGTH_SHORT)
+        pdfRef.removeValue()
+            .addOnSuccessListener {
+                Toast.makeText(this, "PDF deleted successfully", Toast.LENGTH_SHORT).show()
+                pdfList.remove(pdfFile)
+                adapter?.submitList(pdfList.toList())
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Failed to delete PDF: ${e.message}", Toast.LENGTH_SHORT)
                     .show()
             }
-            }.addOnFailureListener {
-                Toast.makeText(this, "Failed to delete PDF: ${it.message}", Toast.LENGTH_SHORT)
-                    .show()
-            }
-        }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu)
+        return true
+    }
 
+    override fun onDeletePdf(pdfFile: PdfFile) {
+        deletePdfFile(pdfFile)
+    }
+}
 
