@@ -17,6 +17,10 @@ class PdfFilesAdapter(private val listener: PdfClickListener) :
             binding.root.setOnClickListener {
                 listener.onPdfClicked(getItem(adapterPosition))
             }
+            binding.root.setOnLongClickListener {
+                listener.onPdfLongClicked(getItem(adapterPosition))
+                true
+            }
         }
 
         fun bind(data: PdfFile) {
@@ -43,5 +47,6 @@ class PdfFilesAdapter(private val listener: PdfClickListener) :
 
     interface PdfClickListener {
         fun onPdfClicked(pdfFile: PdfFile)
+        fun onPdfLongClicked(pdfFile: PdfFile)
     }
 }
