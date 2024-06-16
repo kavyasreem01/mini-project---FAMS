@@ -5,20 +5,21 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/background_gradient"
     tools:context=".splashpage">
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:layout_width="250dp"
+        android:layout_height="200dp"
         android:layout_marginStart="130dp"
-        android:layout_marginTop="160dp"
+        android:layout_marginTop="150dp"
         android:layout_marginEnd="130dp"
         android:layout_marginBottom="200dp"
         android:contentDescription="@string/fams"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.4"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.117"
@@ -26,8 +27,8 @@
 
     <TextView
         android:id="@+id/textView"
-        android:layout_width="180dp"
-        android:layout_height="70dp"
+        android:layout_width="300dp"
+        android:layout_height="100dp"
         android:layout_marginStart="100dp"
         android:layout_marginTop="45dp"
         android:layout_marginEnd="120dp"
@@ -43,28 +44,27 @@
         android:textStyle="bold|italic"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.412"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/textView2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="400dp"
+        android:layout_height="65dp"
+        android:contentDescription="@string/tag_line"
         android:text="@string/tag_line"
         android:textAlignment="center"
         android:textColor="@color/purple"
-        android:contentDescription="@string/tag_line"
-        tools:layout_editor_absoluteX="25dp"
-        tools:layout_editor_absoluteY="509dp"
+        android:textSize="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.454"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView"
-        app:layout_constraintVertical_bias="1.0"
-        tools:ignore="MissingConstraints"/>
+        app:layout_constraintVertical_bias="0.839"
+        tools:ignore="MissingConstraints" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
