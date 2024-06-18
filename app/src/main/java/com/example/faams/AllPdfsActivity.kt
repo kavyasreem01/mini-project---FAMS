@@ -13,12 +13,9 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.auth.FirebaseAuth
+import androidx.appcompat.widget.SearchView
 import android.view.Menu
-import android.view.MenuItem
 import androidx.appcompat.app.AlertDialog
-import java.io.File
-import android.os.Environment
-import androidx.appcompat.widget.Toolbar
 
 class AllPdfsActivity : AppCompatActivity(), PdfFilesAdapter.PdfClickListener {
     private lateinit var binding: ActivityAllPdfsBinding
@@ -39,6 +36,7 @@ class AllPdfsActivity : AppCompatActivity(), PdfFilesAdapter.PdfClickListener {
             FirebaseDatabase.getInstance().reference.child("pdfs").child(currentUser!!.uid)
         initRecyclerView()
         getAllPdfs()
+        initSearchView()
     }
 
     private fun getAllPdfs() {
@@ -74,6 +72,29 @@ class AllPdfsActivity : AppCompatActivity(), PdfFilesAdapter.PdfClickListener {
         adapter = PdfFilesAdapter(this)
         binding.pdfsRecyclerView.adapter = adapter
     }
+    private fun initSearchView() {
+        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                filterList(newText)
+                return true
+            }
+        })
+    }
+
+    private fun filterList(query: String?) {
+        if (query.isNullOrEmpty()) {
+            adapter.submitList(pdfList)
+        } else {
+            val filteredList = pdfList.filter {
+                it.fileName.contains(query, ignoreCase = true)
+            }
+            adapter.submitList(filteredList)
+        }
+    }
 
     override fun onPdfClicked(pdfFile: PdfFile) {
         val intent = Intent(this, PdfViewerActivity::class.java)
@@ -100,6 +121,8 @@ class AllPdfsActivity : AppCompatActivity(), PdfFilesAdapter.PdfClickListener {
             .show()
     }
 
+
+
     private fun deletePdfFile(pdfFile: PdfFile) {
         val pdfRef = databaseReference.child(pdfFile.key)
 
@@ -107,7 +130,7 @@ class AllPdfsActivity : AppCompatActivity(), PdfFilesAdapter.PdfClickListener {
             .addOnSuccessListener {
                 Toast.makeText(this, "PDF deleted successfully", Toast.LENGTH_SHORT).show()
                 pdfList.remove(pdfFile)
-                adapter?.submitList(pdfList.toList())
+                adapter.submitList(pdfList.toList())
             }
             .addOnFailureListener { e ->
                 Toast.makeText(this, "Failed to delete PDF: ${e.message}", Toast.LENGTH_SHORT)

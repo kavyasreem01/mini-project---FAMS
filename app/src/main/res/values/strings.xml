@@ -31,4 +31,5 @@
     <string name="delete">Delete</string>
     <string name="share">Share</string>
     <string name="share_all">Share All</string>
+    <string name="no_search_results_found">No search results found</string>
 </resources>
