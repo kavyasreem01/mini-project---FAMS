@@ -1,4 +1,4 @@
-package com.example.faams
+/*package com.example.faams
 
 import android.content.Intent
 import android.os.Bundle
@@ -68,4 +68,95 @@ class AllPdfsActivity : AppCompatActivity(), PdfFilesAdapter.PdfClickListener {
         intent.putExtra("downloadUrl", pdfFile.downloadUrl)
         startActivity(intent)
     }
+}*/
+package com.example.faams
+
+import android.content.Intent
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import android.view.View
+import android.widget.Toast
+import androidx.appcompat.widget.SearchView
+import androidx.recyclerview.widget.GridLayoutManager
+import com.example.faams.databinding.ActivityAllPdfsBinding
+import com.google.firebase.database.*
+
+class AllPdfsActivity : AppCompatActivity(), PdfFilesAdapter.PdfClickListener {
+    private lateinit var binding: ActivityAllPdfsBinding
+    private lateinit var databaseReference: DatabaseReference
+    private lateinit var adapter: PdfFilesAdapter
+    private val pdfList = mutableListOf<PdfFile>()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityAllPdfsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        databaseReference = FirebaseDatabase.getInstance().reference.child("pdfs")
+        initRecyclerView()
+        initSearchView()
+        getAllPdfs()
+    }
+
+    private fun getAllPdfs() {
+        binding.progressBar.visibility = View.VISIBLE
+        databaseReference.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                pdfList.clear()
+                snapshot.children.forEach {
+                    val pdfFile = it.getValue(PdfFile::class.java)
+                    if (pdfFile != null) {
+                        pdfList.add(pdfFile)
+                    }
+                }
+                if (pdfList.isEmpty())
+                    Toast.makeText(this@AllPdfsActivity, "No Data Found", Toast.LENGTH_SHORT).show()
+                adapter.submitList(pdfList)
+                binding.progressBar.visibility = View.GONE
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(this@AllPdfsActivity, error.message, Toast.LENGTH_SHORT).show()
+                binding.progressBar.visibility = View.GONE
+            }
+        })
+    }
+
+    private fun initRecyclerView() {
+        binding.pdfsRecyclerView.setHasFixedSize(true)
+        binding.pdfsRecyclerView.layoutManager = GridLayoutManager(this, 2)
+        adapter = PdfFilesAdapter(this)
+        binding.pdfsRecyclerView.adapter = adapter
+    }
+
+    private fun initSearchView() {
+        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                filterList(newText)
+                return true
+            }
+        })
+    }
+
+    private fun filterList(query: String?) {
+        if (query.isNullOrEmpty()) {
+            adapter.submitList(pdfList)
+        } else {
+            val filteredList = pdfList.filter {
+                it.fileName.contains(query, ignoreCase = true)
+            }
+            adapter.submitList(filteredList)
+        }
+    }
+
+    override fun onPdfClicked(pdfFile: PdfFile) {
+        val intent = Intent(this, PdfViewerActivity::class.java)
+        intent.putExtra("fileName", pdfFile.fileName)
+        intent.putExtra("downloadUrl", pdfFile.downloadUrl)
+        startActivity(intent)
+    }
 }
+

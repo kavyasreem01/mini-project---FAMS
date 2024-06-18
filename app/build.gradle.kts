@@ -69,7 +69,7 @@ dependencies {
     implementation("androidx.recyclerview:recyclerview:1.2.1")
     implementation("androidx.constraintlayout:constraintlayout:2.0.4")
     implementation("androidx.appcompat:appcompat:1.4.0")
-    implementation ("androidx.appcompat:appcompat:1.4.0")
+    implementation("com.google.firebase:firebase-firestore:23.0.3")
 }
 
 allprojects {
