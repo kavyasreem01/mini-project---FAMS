@@ -72,6 +72,7 @@ class AllPdfsActivity : AppCompatActivity(), PdfFilesAdapter.PdfClickListener {
         adapter = PdfFilesAdapter(this)
         binding.pdfsRecyclerView.adapter = adapter
     }
+
     private fun initSearchView() {
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
@@ -120,8 +121,6 @@ class AllPdfsActivity : AppCompatActivity(), PdfFilesAdapter.PdfClickListener {
             }
             .show()
     }
-
-
 
     private fun deletePdfFile(pdfFile: PdfFile) {
         val pdfRef = databaseReference.child(pdfFile.key)
