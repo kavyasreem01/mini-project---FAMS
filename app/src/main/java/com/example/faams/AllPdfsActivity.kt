@@ -124,4 +124,3 @@ class AllPdfsActivity : AppCompatActivity(), PdfFilesAdapter.PdfClickListener {
         deletePdfFile(pdfFile)
     }
 }
-
