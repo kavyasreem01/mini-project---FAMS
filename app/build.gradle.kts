@@ -58,10 +58,8 @@ dependencies {
     implementation ("androidx.biometric:biometric:1.2.0-alpha04")
     implementation("com.github.barteksc:android-pdf-viewer:2.8.2")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version")
-    implementation ("com.squareup.retrofit2:retrofit:2.9.0'")
-    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.google.firebase:firebase-common")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-
 }
