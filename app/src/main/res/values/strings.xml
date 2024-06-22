@@ -32,4 +32,6 @@
     <string name="share">Share</string>
     <string name="share_all">Share All</string>
     <string name="no_search_results_found">No search results found</string>
+    <string name="Type_your_Phone_Number">type ur phno</string>
+    <string name="Type_your_Mobile_number">Type your Phone number</string>
 </resources>
