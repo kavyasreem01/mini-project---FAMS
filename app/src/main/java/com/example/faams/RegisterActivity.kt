@@ -8,6 +8,12 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.faams.databinding.ActivityRegisterBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.google.firebase.auth.PhoneAuthOptions
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+
+
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -37,7 +43,9 @@ class RegisterActivity : AppCompatActivity() {
                 if (pass == confirmPass) {
                     firebaseAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener { task ->
                         if (task.isSuccessful) {
+
                             val user = firebaseAuth.currentUser
+                            savePhoneNumber(user?.uid, phoneNumber)
                             user?.sendEmailVerification()?.addOnCompleteListener { verifyTask ->
                                 if (verifyTask.isSuccessful) {
 
@@ -64,6 +72,19 @@ class RegisterActivity : AppCompatActivity() {
             } else {
                 Toast.makeText(this, "Empty Fields Are not Allowed !!", Toast.LENGTH_SHORT).show()
             }
+        }
+    }
+    private fun savePhoneNumber(userId: String?, phoneNumber: String) {
+        userId?.let {
+            val database = FirebaseDatabase.getInstance()
+            val usersRef = database.getReference("Users")
+            usersRef.child(it).child("phoneNumber").setValue(phoneNumber)
+                .addOnSuccessListener {
+                    Toast.makeText(this, "Phone number saved successfully", Toast.LENGTH_SHORT).show()
+                }
+                .addOnFailureListener {
+                    Toast.makeText(this, "Failed to save phone number: ${it.message}", Toast.LENGTH_SHORT).show()
+                }
         }
     }
 }

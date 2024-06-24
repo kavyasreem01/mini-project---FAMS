@@ -88,7 +88,6 @@ class PdfFilesAdapter(private val listener: PdfClickListener) :
         override fun areContentsTheSame(oldItem: PdfFile, newItem: PdfFile) = oldItem == newItem
 
     }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PdfFilesViewHolder {
         val binding = EachPdfItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return PdfFilesViewHolder(binding)

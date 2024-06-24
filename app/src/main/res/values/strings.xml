@@ -34,4 +34,6 @@
     <string name="no_search_results_found">No search results found</string>
     <string name="Type_your_Phone_Number">type ur phno</string>
     <string name="Type_your_Mobile_number">Type your Phone number</string>
+    <string name="enter_otp">Enter OTP</string>
+    <string name="otp">OTP</string>
 </resources>

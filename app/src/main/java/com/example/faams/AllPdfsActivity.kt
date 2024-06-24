@@ -15,8 +15,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
 import android.net.Uri
-import androidx.core.content.FileProvider
-import java.io.File
+import android.util.Log
+
 
 class AllPdfsActivity : AppCompatActivity(), PdfFilesAdapter.PdfClickListener {
     private lateinit var binding: ActivityAllPdfsBinding
@@ -47,13 +47,18 @@ class AllPdfsActivity : AppCompatActivity(), PdfFilesAdapter.PdfClickListener {
                 for (dataSnapshot in snapshot.children) {
                     val pdfFile = dataSnapshot.getValue(PdfFile::class.java)
                     pdfFile?.let {
-                        it.key = dataSnapshot.key ?: ""
-                        pdfList.add(it)
+                        if (it.fileName.isNotBlank()) {
+                            it.key = dataSnapshot.key ?: ""
+                            pdfList.add(it)
+                        } else {
+                            Log.e("PdfFileError", "Encountered PdfFile with blank fileName")
+                        }
                     }
                 }
-                if (pdfList.isEmpty())
+                if (pdfList.isEmpty()) {
                     Toast.makeText(this@AllPdfsActivity, "No Data Found", Toast.LENGTH_SHORT).show()
-                adapter.submitList(pdfList.toList())
+                }
+                    adapter.submitList(pdfList.toList())
                 binding.progressBar.visibility = View.GONE
             }
 
@@ -119,24 +124,14 @@ class AllPdfsActivity : AppCompatActivity(), PdfFilesAdapter.PdfClickListener {
             }
             .show()
     }
-   private fun sharePdf(pdfFile: PdfFile) {
-        val downloadUrl = pdfFile.downloadUrl
-        if (downloadUrl != null) {
-            val uri = Uri.parse(downloadUrl)
-            val shareIntent = Intent(Intent.ACTION_SEND)
-            shareIntent.type = "application/pdf"
-            shareIntent.putExtra(Intent.EXTRA_STREAM, uri)
-            shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Sharing PDF File")
-            shareIntent.putExtra(Intent.EXTRA_TEXT, "Sharing ${pdfFile.fileName}")
 
-            // Ensure there's a handler to perform this action
-            if (shareIntent.resolveActivity(packageManager) != null) {
-                startActivity(Intent.createChooser(shareIntent, "Share PDF via"))
-            } else {
-                Toast.makeText(this, "No app available to handle this action", Toast.LENGTH_SHORT)
-                    .show()
-            }
-        }
+    private fun sharePdf(pdfFile: PdfFile) {
+        val intent = Intent(Intent.ACTION_SEND)
+        intent.type = "application/pdf"
+        intent.putExtra(Intent.EXTRA_STREAM, Uri.parse(pdfFile.downloadUrl))
+        intent.putExtra(Intent.EXTRA_SUBJECT, "Sharing PDF File")
+        intent.putExtra(Intent.EXTRA_TEXT, "Sharing ${pdfFile.fileName}")
+        startActivity(Intent.createChooser(intent, "Share PDF via"))
     }
 
     private fun confirmAndDeletePdf(pdfFile: PdfFile) {
