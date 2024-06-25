@@ -4,7 +4,6 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.google.gms.google.services)
 }
-
 android {
     namespace = "com.example.faams"
     compileSdk = 34
@@ -16,10 +15,8 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -40,9 +37,9 @@ android {
         viewBinding= true
     }
 }
-
 dependencies {
     implementation(libs.firebase.functions)
+    implementation(libs.firebase.messaging)
     val lifecycle_version = "2.8.1"
     val arch_version = "2.2.0"
 
@@ -59,6 +56,9 @@ dependencies {
     implementation("com.github.barteksc:android-pdf-viewer:2.8.2")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version")
     implementation("com.google.firebase:firebase-common")
+    implementation("com.googlecode.libphonenumber:libphonenumber:8.12.38")
+    implementation("com.google.android.gms:play-services-auth:20.0.0")
+    implementation ("com.google.firebase:firebase-auth:21.0.1")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

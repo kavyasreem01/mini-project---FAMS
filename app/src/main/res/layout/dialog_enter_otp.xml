@@ -1,27 +1,28 @@
-<!-- res/layout/dialog_enter_otp.xml -->
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="16dp">
 
-    <TextView
+    <EditText
+        android:id="@+id/etOtp"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:hint="@string/enter_otp"
+    android:inputType="number"
+    android:maxLength="6"
+    android:paddingStart="12dp"
+    android:paddingEnd="12dp"
+    android:textSize="18sp" />
+
+    <Button
+        android:id="@+id/btnVerify"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/enter_otp"
+        android:text="@string/verify"
         android:textSize="18sp"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:layout_marginBottom="16dp"/>
-
-    <EditText
-        android:id="@+id/otpEt"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:hint="@string/otp"
-        android:inputType="number"
-        android:padding="12dp"
-        android:textSize="16sp"
-        android:layout_margin="8dp"/>
+        android:paddingStart="24dp"
+    android:paddingEnd="24dp" />
 
 </LinearLayout>
