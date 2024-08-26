@@ -80,7 +80,6 @@ class PdfFilesAdapter(private val listener: PdfClickListener) :
             binding.fileName.text = data.fileName
         }
     }
-
     class PdfDiffCallback : DiffUtil.ItemCallback<PdfFile>() {
         override fun areItemsTheSame(oldItem: PdfFile, newItem: PdfFile) =
             oldItem.downloadUrl == newItem.downloadUrl

@@ -37,4 +37,7 @@
     <string name="enter_otp">Enter OTP</string>
     <string name="otp">OTP</string>
     <string name="verify">Verify</string>
+    <string name="confirm_your_password">Confirm your password</string>
+    <string name="already_have_an_account_login">Already have an account? Login</string>
+    <string name="password_constraints">password_constraints</string>
 </resources>

@@ -14,4 +14,6 @@
     <color name="primary_color">#517593</color>
     <color name="secondary_color">#7b9bb6</color>
     <color name="red">#D22B2B</color>
+    <color name="colorPrimary">#6200EE</color>
+
 </resources>

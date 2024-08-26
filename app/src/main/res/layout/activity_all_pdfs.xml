@@ -24,16 +24,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
 
-    <!-- <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="0dp"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintWidth_percent="1" /> -->
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/pdfsRecyclerView"
@@ -50,7 +40,7 @@
         android:id="@+id/noResultsTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="No search results found"
+        android:text="@string/no_search_results_found"
         android:textSize="18sp"
         android:textColor="@android:color/black"
         android:visibility="gone"

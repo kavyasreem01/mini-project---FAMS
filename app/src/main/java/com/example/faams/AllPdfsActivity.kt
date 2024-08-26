@@ -123,7 +123,9 @@ class AllPdfsActivity : AppCompatActivity(), PdfFilesAdapter.PdfClickListener {
                 dialog.dismiss()
             }
             .show()
+
     }
+
 
     private fun sharePdf(pdfFile: PdfFile) {
         val intent = Intent(Intent.ACTION_SEND)
@@ -177,11 +179,11 @@ class AllPdfsActivity : AppCompatActivity(), PdfFilesAdapter.PdfClickListener {
         menuInflater.inflate(R.menu.main_menu, menu)
         return true
     }
-}*/
+}
+*/
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.util.Log
+import android.text.InputType
 import android.view.Menu
 import android.view.View
 import android.widget.EditText
@@ -191,25 +193,23 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.faams.databinding.ActivityAllPdfsBinding
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
-import com.google.firebase.auth.PhoneAuthOptions
-import com.google.firebase.auth.PhoneAuthProvider
-import com.google.firebase.auth.PhoneAuthCredential
-import com.google.firebase.FirebaseException
+import com.google.firebase.functions.FirebaseFunctions
+import com.google.firebase.functions.ktx.functions
+import com.google.firebase.ktx.Firebase
+import android.net.Uri
+import android.util.Log
 
 class AllPdfsActivity : AppCompatActivity(), PdfFilesAdapter.PdfClickListener {
     private lateinit var binding: ActivityAllPdfsBinding
     private lateinit var databaseReference: DatabaseReference
     private lateinit var adapter: PdfFilesAdapter
     private lateinit var firebaseAuth: FirebaseAuth
-    private lateinit var currentUser: FirebaseUser
     private val pdfList = mutableListOf<PdfFile>()
-    private var storedVerificationId: String? = null
-    private var resendToken: PhoneAuthProvider.ForceResendingToken? = null
-
-    private val TAG = "AllPdfsActivity"
+    private lateinit var functions: FirebaseFunctions
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -217,10 +217,10 @@ class AllPdfsActivity : AppCompatActivity(), PdfFilesAdapter.PdfClickListener {
         setContentView(binding.root)
 
         firebaseAuth = FirebaseAuth.getInstance()
-        currentUser = firebaseAuth.currentUser!!
+        val currentUser = firebaseAuth.currentUser
+        functions = Firebase.functions
 
-        databaseReference =
-            FirebaseDatabase.getInstance().reference.child("pdfs").child(currentUser.uid)
+        databaseReference = FirebaseDatabase.getInstance().reference.child("pdfs").child(currentUser!!.uid)
         initRecyclerView()
         getAllPdfs()
         initSearchView()
@@ -304,78 +304,47 @@ class AllPdfsActivity : AppCompatActivity(), PdfFilesAdapter.PdfClickListener {
             .setTitle(pdfFile.fileName)
             .setItems(options) { dialog, which ->
                 when (which) {
-                    0 -> sendOTP(pdfFile, ::sharePdf)
-                    1 -> sendOTP(pdfFile, ::confirmAndDeletePdf)
+                    0 -> promptReauthentication(pdfFile, "share")
+                    1 -> promptReauthentication(pdfFile, "delete")
                 }
                 dialog.dismiss()
             }
             .show()
     }
 
-    private fun sendOTP(pdfFile: PdfFile, action: (PdfFile) -> Unit) {
-        currentUser.phoneNumber?.let { phoneNumber ->
-            sendVerificationCode(phoneNumber, object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-                override fun onVerificationCompleted(credential: PhoneAuthCredential) {
-                    Log.d(TAG, "onVerificationCompleted:$credential")
-                    FirebaseAuth.getInstance().signInWithCredential(credential)
-                        .addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                action(pdfFile)
-                            } else {
-                                Toast.makeText(this@AllPdfsActivity, "Invalid OTP", Toast.LENGTH_SHORT).show()
+    private fun promptReauthentication(pdfFile: PdfFile, action: String) {
+        val user = firebaseAuth.currentUser
+        if (user != null && user.email != null) {
+            val passwordDialog = AlertDialog.Builder(this)
+            val passwordInput = EditText(this)
+            passwordInput.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+            passwordDialog.setView(passwordInput)
+            passwordDialog.setTitle("Re-authentication Required")
+            passwordDialog.setMessage("Please enter your password to confirm the action.")
+            passwordDialog.setPositiveButton("Confirm") { dialog, _ ->
+                val password = passwordInput.text.toString()
+                val credential = EmailAuthProvider.getCredential(user.email!!, password)
+                user.reauthenticate(credential)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            when (action) {
+                                "delete" -> showDeleteConfirmationDialog(pdfFile)
+                                "share" -> sharePdf(pdfFile)
                             }
+                        } else {
+                            Toast.makeText(this, "Re-authentication failed. Please try again.", Toast.LENGTH_SHORT).show()
                         }
-                }
-
-                override fun onVerificationFailed(e: FirebaseException) {
-                    Log.w(TAG, "onVerificationFailed", e)
-                    Toast.makeText(this@AllPdfsActivity, "Verification failed: ${e.message}", Toast.LENGTH_SHORT).show()
-                }
-
-                override fun onCodeSent(
-                    verificationId: String,
-                    token: PhoneAuthProvider.ForceResendingToken
-                ) {
-                    Log.d(TAG, "onCodeSent:$verificationId")
-                    storedVerificationId = verificationId
-                    resendToken = token
-
-                    // Show OTP dialog here
-                    showOtpDialog()
-                }
-            })
+                        dialog.dismiss()
+                    }
+            }
+            passwordDialog.setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }
+            passwordDialog.show()
+        } else {
+            Toast.makeText(this, "User not signed in", Toast.LENGTH_SHORT).show()
         }
     }
-
-    private fun showOtpDialog() {
-        val dialogBuilder = AlertDialog.Builder(this)
-        val inflater = this.layoutInflater
-        val dialogView = inflater.inflate(R.layout.dialog_enter_otp, null)
-        val editText = dialogView.findViewById<View>(R.id.etOtp) as EditText
-
-        dialogBuilder.setView(dialogView)
-            .setPositiveButton(android.R.string.ok) { dialog, which ->
-                val otp = editText.text.toString()
-                if (otp.isNotEmpty()) {
-                    val credential = PhoneAuthProvider.getCredential(storedVerificationId!!, otp)
-                    FirebaseAuth.getInstance().signInWithCredential(credential)
-                        .addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                Toast.makeText(this@AllPdfsActivity, "OTP verified successfully", Toast.LENGTH_SHORT).show()
-                            } else {
-                                Toast.makeText(this@AllPdfsActivity, "Invalid OTP", Toast.LENGTH_SHORT).show()
-                            }
-                        }
-                } else {
-                    Toast.makeText(this@AllPdfsActivity, "Please enter OTP", Toast.LENGTH_SHORT).show()
-                }
-            }
-            .setNegativeButton(android.R.string.cancel) { dialog, which ->
-                dialog.dismiss()
-            }
-            .show()
-    }
-
 
     private fun sharePdf(pdfFile: PdfFile) {
         val intent = Intent(Intent.ACTION_SEND)
@@ -396,6 +365,7 @@ class AllPdfsActivity : AppCompatActivity(), PdfFilesAdapter.PdfClickListener {
             Toast.makeText(this, "User not signed in", Toast.LENGTH_SHORT).show()
         }
     }
+
     private fun showDeleteConfirmationDialog(pdfFile: PdfFile) {
         AlertDialog.Builder(this)
             .setTitle("Delete PDF")
@@ -409,6 +379,7 @@ class AllPdfsActivity : AppCompatActivity(), PdfFilesAdapter.PdfClickListener {
             }
             .show()
     }
+
     private fun deletePdfFile(pdfFile: PdfFile) {
         val pdfRef = databaseReference.child(pdfFile.key)
 
@@ -422,21 +393,15 @@ class AllPdfsActivity : AppCompatActivity(), PdfFilesAdapter.PdfClickListener {
                 Toast.makeText(this, "Failed to delete PDF: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
-    private fun sendVerificationCode(phoneNumber: String, callbacks: PhoneAuthProvider.OnVerificationStateChangedCallbacks) {
-        val options = PhoneAuthOptions.newBuilder(firebaseAuth)
-            .setPhoneNumber(phoneNumber)       // Phone number to verify
-            .setTimeout(60L, java.util.concurrent.TimeUnit.SECONDS) // Timeout duration
-            .setActivity(this)                 // Activity (for callback binding)
-            .setCallbacks(callbacks)
-            .build()
-        PhoneAuthProvider.verifyPhoneNumber(options)
-    }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
         return true
     }
 }
+
+
+
 
 
 
